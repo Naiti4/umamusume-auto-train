@@ -5,6 +5,7 @@ from core.ocr import OCR
 from core.recognizer import Recognizer
 from utils import helper, log
 from utils.constants import CONST, MOOD_LIST, BAD_STATUS_EFFECTS
+import cv2
 
 
 class StateAnalyzer:
@@ -19,6 +20,7 @@ class StateAnalyzer:
             "[": "1",
             "]": "1",
             "|": "1",
+            "J": "1",
             "S": "5",
             "s": "5",
             "Z": "2",
@@ -112,6 +114,8 @@ class StateAnalyzer:
 
         if "Race" in turn_text or "Day" in turn_text:
             return "Race Day"
+        elif "GOAL".lower() in turn_text.lower() or "GO".lower() in turn_text.lower():
+            return "GOAL"
 
         if not turn_text:
             return -1
@@ -273,9 +277,7 @@ class URAStateAnalyzer(StateAnalyzer):
     pass
 
 
-import cv2
-import time
-from datetime import datetime
+# from datetime import datetime
 
 
 class UnityCupStateAnalyzer(StateAnalyzer):
@@ -287,8 +289,8 @@ class UnityCupStateAnalyzer(StateAnalyzer):
         img = helper.enhance_img(img, threshold=230)
         text = self.ocr.extract_number(img)
 
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S_%f")
-        cv2.imwrite(f"./logs/{timestamp}-{text}-unity_turn.png", img)
+        # timestamp = datetime.now().strftime("%Y%m%d_%H%M%S_%f")
+        # cv2.imwrite(f"./logs/{timestamp}-{text}-unity_turn.png", img)
 
         if text:
             return text

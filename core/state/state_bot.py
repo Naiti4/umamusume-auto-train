@@ -25,7 +25,7 @@ class BotState:
 
     @property
     def is_race_day(self) -> bool:
-        return self.turn == "Race Day"
+        return self.turn == "Race Day" or self.turn == "GOAL"
 
     @property
     def is_junior_year(self) -> bool:

@@ -22,6 +22,7 @@ from core.state.create_analyzer import create_state_analyzer
 class Bot:
     templates = {
         "tazuna": "assets/ui/tazuna_hint.png",
+        "unity_cup": "assets/ui/unity_cup_banner.png",
         "retry": "assets/buttons/retry_btn.png",
         "event": "assets/icons/event_choice_1.png",
         "inspiration": "assets/buttons/inspiration_btn2.png",
@@ -109,6 +110,9 @@ class Bot:
             if self.interaction.click_boxes(matches["retry"], text="retry"):
                 continue
 
+            if matches["unity_cup"]:
+                self.flow_manager.run(screen, matches)
+                continue
             if not matches["tazuna"]:
                 print(".", end="")
                 continue

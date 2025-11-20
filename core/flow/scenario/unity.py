@@ -1,6 +1,8 @@
 # core/flow/scenario/unity.py
 from core.flow.base_flow import BaseFlow
 from utils.log import info, debug
+from utils.assets_repository import get_button
+from utils.helper import sleep, get_secs
 
 
 class UnityFlow(BaseFlow):
@@ -8,6 +10,11 @@ class UnityFlow(BaseFlow):
         super().__init__(**deps)
 
     def run(self, screen, matches):
+        unity_cup = matches.get("unity_cup", None)
+        if unity_cup:
+            self._handle_unity_cup()
+            return
+
         # 3. analyze state
         state = self.state_analyzer.analyze_current_state(screen)
 
@@ -68,3 +75,30 @@ class UnityFlow(BaseFlow):
 
         debug("handle_training")
         self.handle_training(state)
+
+    def _handle_unity_cup(self):
+        info("Handle Unity Cup")
+        self.interaction.click_element(get_button("unity_cup_btn"))
+        sleep(1)
+        select_opponent = self.recognizer.locate_on_screen(
+            get_button("select_opponent_btn")
+        )
+        if select_opponent:
+            self.interaction.click_coordinates(300, 480)  # second
+            sleep(0.3)
+            self.interaction.click_boxes(select_opponent, text="Select opponent")
+            sleep(0.5)
+            self.interaction.click_element(get_button("begin_showdown_btn"))
+
+        sleep(5)
+        self.interaction.click_element(
+            get_button("see_all_results_btn"), max_search_time=get_secs(5)
+        )
+        sleep(2)
+        self.interaction.click_element(
+            get_button("skip_btn"), clicks=3, max_search_time=get_secs(3)
+        )
+        sleep(1)
+        self.interaction.click_element(get_button("next_btn"))
+        sleep(1.5)
+        self.interaction.click_element(get_button("next2_btn"))
